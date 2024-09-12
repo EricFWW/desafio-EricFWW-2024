@@ -19,83 +19,84 @@ class RecintosZoo {
     }
   
     analisaRecintos(animal, quantidade) {
-      if (!this.animais[animal]) {
-        return { erro: 'Animal inválido' };
-      }
-      
-      if (quantidade <= 0) {
-        return { erro: 'Quantidade inválida' };
-      }
-  
-      const animalInfo = this.animais[animal];
-      let recintosViaveis = [];
-  
-      this.recintos.forEach(recinto => {
-        const biomaAdequado = animalInfo.biomas.some(bioma => recinto.bioma.includes(bioma));
-        const espacoDisponivel = this.calculaEspacoDisponivel(recinto, animalInfo.tamanho, quantidade, animal);
-  
-        if (biomaAdequado && espacoDisponivel >= 0 && this.verificaConvivencia(recinto, animal)) {
-          recintosViaveis.push(`Recinto ${recinto.numero} (espaço livre: ${espacoDisponivel} total: ${recinto.tamanho})`);
+        if (!this.animais[animal]) {
+            return { erro: 'Animal inválido' };
         }
-      });
+      
+        if (quantidade <= 0) {
+            return { erro: 'Quantidade inválida' };
+        }
   
-      if (recintosViaveis.length > 0) {
-        return { recintosViaveis };
-      } else {
-        return { erro: 'Não há recinto viável' };
-      }
+        const animalInfo = this.animais[animal];
+        let recintosViaveis = [];
+  
+        this.recintos.forEach(recinto => {
+            const biomaAdequado = animalInfo.biomas.some(bioma => recinto.bioma.includes(bioma));
+            const espacoDisponivel = this.calculaEspacoDisponivel(recinto, animalInfo.tamanho, quantidade, animal);
+  
+            if (biomaAdequado && espacoDisponivel >= 0 && this.verificaConvivencia(recinto, animal)) {
+                recintosViaveis.push(`Recinto ${recinto.numero} (espaço livre: ${espacoDisponivel} total: ${recinto.tamanho})`);
+            }
+        });
+  
+        if (recintosViaveis.length > 0) {
+            return { recintosViaveis };
+        } else {
+            return { erro: 'Não há recinto viável' };
+        }
     }
   
     calculaEspacoDisponivel(recinto, tamanhoAnimal, quantidade, novoAnimal) {
-      let espacoOcupado = 0;
+        let espacoOcupado = 0;
   
-      // Calcula o espaço ocupado pelos animais existentes
-      recinto.ocupacao.forEach(animal => {
-        espacoOcupado += this.animais[animal.especie].tamanho * animal.quantidade;
-      });
+        // Calcula o espaço ocupado pelos animais existentes
+        recinto.ocupacao.forEach(animal => {
+            espacoOcupado += this.animais[animal.especie].tamanho * animal.quantidade;
+        });
   
-      // Adiciona espaço extra se houver mais de uma espécie no recinto
-      if (recinto.ocupacao.length > 0 && recinto.ocupacao[0].especie !== novoAnimal) {
-        espacoOcupado += 1;
-      }
+        // Adiciona espaço extra se houver mais de uma espécie no recinto
+        if (recinto.ocupacao.length > 0 && recinto.ocupacao[0].especie !== novoAnimal) {
+            espacoOcupado += 1;
+        }
   
-      // Calcula o espaço necessário para os novos animais
-      const espacoNecessario = tamanhoAnimal * quantidade;
+        // Calcula o espaço necessário para os novos animais
+        const espacoNecessario = tamanhoAnimal * quantidade;
   
-      // Verifica se o macaco não vai ficar sozinho no recinto
-      if (recinto.ocupacao.length === 0 && novoAnimal === 'MACACO' && quantidade < 2) {
-        return -1;  // Esse -1 vai tornar o "espacoDisponivel >= 0" em false
-      }
+        // Verifica se o macaco não vai ficar sozinho no recinto
+        if (recinto.ocupacao.length === 0 && novoAnimal === 'MACACO' && quantidade < 2) {
+            return -1;  // Esse -1 vai tornar o "espacoDisponivel >= 0" em false
+        }
   
-      return recinto.tamanho - espacoOcupado - espacoNecessario;
+        return recinto.tamanho - espacoOcupado - espacoNecessario;
     }
   
     verificaConvivencia(recinto, novoAnimal) {
-      const ocupacaoExistente = recinto.ocupacao;
+        const ocupacaoExistente = recinto.ocupacao;
   
-      // Verifica se o recinto está vazio ou tem a mesma espécie para colocar o animal carnívoro
-      if (this.animais[novoAnimal].carnivoro) {
-        return ocupacaoExistente.length === 0 || ocupacaoExistente.every(a => a.especie === novoAnimal);
-      }
+        // Verifica se o recinto está vazio ou tem a mesma espécie para colocar o animal carnívoro
+        if (this.animais[novoAnimal].carnivoro) {
+            return ocupacaoExistente.length === 0 || ocupacaoExistente.every(a => a.especie === novoAnimal);
+        }
 
         // Verifica se o novo animal é um hipopótamo
         if (novoAnimal === 'HIPOPOTAMO') {
-        // Hipopótamos só podem conviver com outras espécies se o bioma for savana E rio
-        const biomaAdequado = recinto.bioma.includes('savana') && recinto.bioma.includes('rio');
-        
-        if (ocupacaoExistente.length > 0 && !biomaAdequado) {
-        return false;  // Recinto não viável se já houver outras espécies e o bioma não for savana E rio
-    }
-  }
+            // Hipopótamos só podem conviver com outras espécies se o bioma for savana E rio
+            const biomaAdequado = recinto.bioma.includes('savana') && recinto.bioma.includes('rio');
+
+            if (ocupacaoExistente.length > 0 && !biomaAdequado) {
+                return false;  // Recinto não viável se já houver outras espécies e o bioma não for savana E rio
+            }
+        }
   
-      // Verifica se já há carnívoros no recinto (caso o novo animal seja herbívoro)
-      const existeCarnivoro = ocupacaoExistente.some(animal => this.animais[animal.especie].carnivoro);
-      if (existeCarnivoro) {
-        return false;  // Não pode ter herbívoros e carnívoros no mesmo recinto
-      }
+        // Verifica se já há carnívoros no recinto (caso o novo animal seja herbívoro)
+        const existeCarnivoro = ocupacaoExistente.some(animal => this.animais[animal.especie].carnivoro);
+
+        if (existeCarnivoro) {
+            return false;  // Não pode ter herbívoros e carnívoros no mesmo recinto
+        }
   
-      return true;
+        return true;
     }
   }
 
-  export { RecintosZoo as RecintosZoo };
+    export { RecintosZoo as RecintosZoo };
