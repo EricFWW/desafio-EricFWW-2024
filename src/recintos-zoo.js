@@ -18,7 +18,6 @@ class RecintosZoo {
       };
     }
   
-    // Método principal que analisa os recintos
     analisaRecintos(animal, quantidade) {
       if (!this.animais[animal]) {
         return { erro: 'Animal inválido' };
@@ -47,7 +46,6 @@ class RecintosZoo {
       }
     }
   
-    // Calcula o espaço disponível em cada recinto
     calculaEspacoDisponivel(recinto, tamanhoAnimal, quantidade, novoAnimal) {
       let espacoOcupado = 0;
   
@@ -64,27 +62,36 @@ class RecintosZoo {
       // Calcula o espaço necessário para os novos animais
       const espacoNecessario = tamanhoAnimal * quantidade;
   
-      // Verifica se os macacos podem ser colocados sozinhos
+      // Verifica se o macaco não vai ficar sozinho no recinto
       if (recinto.ocupacao.length === 0 && novoAnimal === 'MACACO' && quantidade < 2) {
-        return -1;  // Recinto não viável
+        return -1;  // Esse -1 vai tornar o "espacoDisponivel >= 0" em false
       }
   
       return recinto.tamanho - espacoOcupado - espacoNecessario;
     }
   
-    // Verifica se os novos animais podem conviver com os já existentes
     verificaConvivencia(recinto, novoAnimal) {
       const ocupacaoExistente = recinto.ocupacao;
   
-      // Se o novo animal é carnívoro, ele só pode conviver com sua própria espécie
+      // Verifica se o recinto está vazio ou tem a mesma espécie para colocar o animal carnívoro
       if (this.animais[novoAnimal].carnivoro) {
         return ocupacaoExistente.length === 0 || ocupacaoExistente.every(a => a.especie === novoAnimal);
       }
+
+        // Verifica se o novo animal é um hipopótamo
+        if (novoAnimal === 'HIPOPOTAMO') {
+        // Hipopótamos só podem conviver com outras espécies se o bioma for savana E rio
+        const biomaAdequado = recinto.bioma.includes('savana') && recinto.bioma.includes('rio');
+        
+        if (ocupacaoExistente.length > 0 && !biomaAdequado) {
+        return false;  // Recinto não viável se já houver outras espécies e o bioma não for savana E rio
+    }
+  }
   
       // Verifica se já há carnívoros no recinto (caso o novo animal seja herbívoro)
       const existeCarnivoro = ocupacaoExistente.some(animal => this.animais[animal.especie].carnivoro);
       if (existeCarnivoro) {
-        return false;  // Não pode haver herbívoros com carnívoros
+        return false;  // Não pode ter herbívoros e carnívoros no mesmo recinto
       }
   
       return true;
