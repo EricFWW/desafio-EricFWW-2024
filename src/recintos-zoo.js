@@ -20,11 +20,11 @@ class RecintosZoo {
   
     analisaRecintos(animal, quantidade) {
         if (!this.animais[animal]) {
-            return { erro: 'Animal inválido' };
+            return { erro: "Animal inválido" };
         }
       
         if (quantidade <= 0) {
-            return { erro: 'Quantidade inválida' };
+            return { erro: "Quantidade inválida" };
         }
   
         const animalInfo = this.animais[animal];
@@ -35,21 +35,21 @@ class RecintosZoo {
             const espacoDisponivel = this.calculaEspacoDisponivel(recinto, animalInfo.tamanho, quantidade, animal);
   
             if (biomaAdequado && espacoDisponivel >= 0 && this.verificaConvivencia(recinto, animal)) {
-                recintosViaveis.push("Recinto " + recinto.numero + " (espaço livre: " + espacoDisponivel + " total: " + recinto.tamanho + ")");
+                recintosViaveis.push('Recinto ' + recinto.numero + ' (espaço livre: ' + espacoDisponivel + ' total: ' + recinto.tamanho + ')');
             }
         });
   
         if (recintosViaveis.length > 0) {
             return { recintosViaveis };
         } else {
-            return { erro: 'Não há recinto viável' };
+            return { erro: "Não há recinto viável" };
         }
     }
   
     calculaEspacoDisponivel(recinto, tamanhoAnimal, quantidade, novoAnimal) {
         let espacoOcupado = 0;
   
-        // Calcular espaço ocupado pelos animais existentes
+        // Calcular espaço ocupado pelos animais que já estão no recinto
         recinto.ocupacao.forEach(animal => {
             espacoOcupado += this.animais[animal.especie].tamanho * animal.quantidade;
         });
@@ -99,8 +99,6 @@ class RecintosZoo {
         return true;
     }
   }
-
-  console.log(new RecintosZoo().analisaRecintos('UNICORNIO', 1));
 
     export { RecintosZoo as RecintosZoo };
 
