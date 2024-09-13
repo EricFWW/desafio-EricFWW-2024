@@ -31,10 +31,10 @@ class RecintosZoo {
         let recintosViaveis = [];
   
         this.recintos.forEach(recinto => {
-            const biomaAdequado = animalInfo.biomas.some(bioma => recinto.bioma.includes(bioma));
-            const espacoDisponivel = this.calculaEspacoDisponivel(recinto, animalInfo.tamanho, quantidade, animal);
+            const biomaViavel = animalInfo.biomas.some(bioma => recinto.bioma.includes(bioma));
+            const espacoDisponivel = this.calcularEspacoDisponivel(recinto, animalInfo.tamanho, quantidade, animal);
   
-            if (biomaAdequado && espacoDisponivel >= 0 && this.verificaConvivencia(recinto, animal)) {
+            if (biomaViavel && espacoDisponivel >= 0 && this.verificarConvivencia(recinto, animal)) {
                 recintosViaveis.push('Recinto ' + recinto.numero + ' (espaço livre: ' + espacoDisponivel + ' total: ' + recinto.tamanho + ')');
             }
         });
@@ -46,7 +46,7 @@ class RecintosZoo {
         }
     }
   
-    calculaEspacoDisponivel(recinto, tamanhoAnimal, quantidade, novoAnimal) {
+    calcularEspacoDisponivel(recinto, tamanhoAnimal, quantidade, novoAnimal) {
         let espacoOcupado = 0;
   
         // Calcular espaço ocupado pelos animais que já estão no recinto
@@ -71,7 +71,7 @@ class RecintosZoo {
         return recinto.tamanho - espacoOcupado - espacoNecessario;
     }
   
-    verificaConvivencia(recinto, novoAnimal) {
+    verificarConvivencia(recinto, novoAnimal) {
         const ocupacaoExistente = recinto.ocupacao;
   
         // Verifica se o recinto está vazio ou se tem a mesma espécie para poder colocar o animal carnívoro
